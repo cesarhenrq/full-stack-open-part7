@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { setNotificationWithTimeout } from './reducers/notificationReducer';
+import { initializeBlogs, createBlog } from './reducers/blogsReducer';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -18,7 +19,15 @@ import authService from './services/auth';
 import getToken from './utils/getToken';
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
+
+  const blogsFromStore = useSelector((state) => {
+    const sortedBlogs = [...state.blogs].sort((a, b) => b.likes - a.likes);
+
+    return sortedBlogs;
+  });
 
   const [credentials, setCredentials] = useState({
     username: '',
@@ -28,8 +37,6 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef(null);
-
-  const dispatch = useDispatch();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -58,19 +65,7 @@ const App = () => {
     const token = getToken();
     try {
       blogFormRef.current.toggleVisibility();
-      const newBlog = await blogService.create(blog, token);
-
-      setBlogs([
-        ...blogs,
-        {
-          ...newBlog,
-          user: {
-            username: user.username,
-            name: user.name,
-            id: newBlog.user,
-          },
-        },
-      ]);
+      dispatch(createBlog(blog, token));
 
       dispatch(
         setNotificationWithTimeout(
@@ -135,16 +130,14 @@ const App = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const blogs = await blogService.getAll();
-        blogs.sort((a, b) => b.likes - a.likes);
-        setBlogs(blogs);
+        dispatch(initializeBlogs());
       } catch (error) {
         dispatch(setNotificationWithTimeout(error.response.data.error, 5));
       }
     };
 
     user && fetchBlogs();
-  }, [user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('user');
@@ -162,7 +155,7 @@ const App = () => {
             <BlogForm handleBlogPost={handleBlogPost} />
           </Togglable>
           <h2>blogs</h2>
-          {blogs.map((blog) => (
+          {blogsFromStore.map((blog) => (
             <Blog
               key={blog.id}
               blog={blog}
