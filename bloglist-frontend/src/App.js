@@ -3,7 +3,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setNotificationWithTimeout } from './reducers/notificationReducer';
-import { initializeBlogs, createBlog } from './reducers/blogsReducer';
+import {
+  initializeBlogs,
+  createBlog,
+  likeBlog,
+  setBlogs,
+  removeBlog,
+} from './reducers/blogsReducer';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -13,7 +19,6 @@ import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 
-import blogService from './services/blogs';
 import authService from './services/auth';
 
 import getToken from './utils/getToken';
@@ -21,9 +26,7 @@ import getToken from './utils/getToken';
 const App = () => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
-
-  const blogsFromStore = useSelector((state) => {
+  const blogs = useSelector((state) => {
     const sortedBlogs = [...state.blogs].sort((a, b) => b.likes - a.likes);
 
     return sortedBlogs;
@@ -84,29 +87,12 @@ const App = () => {
   const handleBlogLike = async (blog) => {
     const token = getToken();
     try {
-      const updatedBlog = await blogService.update(blog, token);
-
-      setBlogs(
-        blogs
-          .map((blog) => {
-            const updatedBlogWithUser = {
-              ...updatedBlog,
-              user: {
-                username: blog.user.username,
-                name: blog.user.name,
-                id: updatedBlog.user,
-              },
-            };
-
-            return blog.id === updatedBlog.id ? updatedBlogWithUser : blog;
-          })
-          .sort((a, b) => b.likes - a.likes),
-      );
+      dispatch(likeBlog(blog, token));
     } catch (error) {
       if (error.response.status === 401) {
         handleLogout();
       } else if (error.response.status === 404) {
-        setBlogs(blogs.filter((b) => b.id !== blog.id));
+        dispatch(setBlogs(blogs.filter((b) => b.id !== blog.id)));
       }
       dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
@@ -115,13 +101,12 @@ const App = () => {
   const handleBlogDelete = async (blog) => {
     const token = getToken();
     try {
-      await blogService.remove(blog, token);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
+      dispatch(removeBlog(blog, token));
     } catch (error) {
       if (error.response.status === 401) {
         handleLogout();
       } else if (error.response.status === 404) {
-        setBlogs(blogs.filter((b) => b.id !== blog.id));
+        dispatch(setBlogs(blogs.filter((b) => b.id !== blog.id)));
       }
       dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
@@ -155,7 +140,7 @@ const App = () => {
             <BlogForm handleBlogPost={handleBlogPost} />
           </Togglable>
           <h2>blogs</h2>
-          {blogsFromStore.map((blog) => (
+          {blogs.map((blog) => (
             <Blog
               key={blog.id}
               blog={blog}

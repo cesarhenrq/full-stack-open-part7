@@ -15,7 +15,6 @@ const Blog = ({ blog, onLike, onDelete }) => {
   const handleBlogLike = () => {
     onLike({
       ...blog,
-      likes: blog.likes + 1,
       user: blog.user.id,
       _id: blog.id,
     });
@@ -29,10 +28,10 @@ const Blog = ({ blog, onLike, onDelete }) => {
   };
 
   const isBlogCreatedByLoggedInUser = () => {
-    const loggedInUserId = JSON.parse(
+    const loggedInUsername = JSON.parse(
       window.localStorage.getItem('user'),
     ).username;
-    return blog.user.username === loggedInUserId;
+    return blog.user.username === loggedInUsername;
   };
 
   return (
