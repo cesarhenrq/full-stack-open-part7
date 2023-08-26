@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
+import { useDispatch } from 'react-redux';
+
+import { setNotificationWithTimeout } from './reducers/notificationReducer';
+
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import UserInfo from './components/UserInfo';
@@ -15,13 +19,17 @@ import getToken from './utils/getToken';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   });
+
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
+
   const blogFormRef = useRef(null);
+
+  const dispatch = useDispatch();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -32,13 +40,7 @@ const App = () => {
       setCredentials({ username: '', password: '' });
       window.localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
-      setNotification({
-        message: error.response.data.error,
-        error: true,
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
   };
 
@@ -70,25 +72,17 @@ const App = () => {
         },
       ]);
 
-      setNotification({
-        message: `A new blog ${blog.title} by ${blog.author} added`,
-        error: false,
-      });
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(
+        setNotificationWithTimeout(
+          `A new blog ${blog.title} by ${blog.author} added`,
+          5,
+        ),
+      );
     } catch (error) {
       if (error.response.status === 401) {
         handleLogout();
       }
-      setNotification({
-        message: error.response.data.error,
-        error: true,
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
   };
 
@@ -119,14 +113,7 @@ const App = () => {
       } else if (error.response.status === 404) {
         setBlogs(blogs.filter((b) => b.id !== blog.id));
       }
-
-      setNotification({
-        message: error.response.data.error,
-        error: true,
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
   };
 
@@ -141,13 +128,7 @@ const App = () => {
       } else if (error.response.status === 404) {
         setBlogs(blogs.filter((b) => b.id !== blog.id));
       }
-      setNotification({
-        message: error.response.data.error,
-        error: true,
-      });
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }
   };
 
@@ -158,12 +139,10 @@ const App = () => {
         blogs.sort((a, b) => b.likes - a.likes);
         setBlogs(blogs);
       } catch (error) {
-        setNotification({
-          message: error.response.data.error,
-          error: true,
-        });
+        dispatch(setNotificationWithTimeout(error.response.data.error, 5));
       }
     };
+
     user && fetchBlogs();
   }, [user]);
 
@@ -178,7 +157,7 @@ const App = () => {
         <>
           <UserInfo user={user} />
           <LogoutButton onClick={handleLogout} />
-          <Notification notification={notification} />
+          <Notification />
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm handleBlogPost={handleBlogPost} />
           </Togglable>
@@ -194,7 +173,7 @@ const App = () => {
         </>
       ) : (
         <>
-          <Notification notification={notification} />
+          <Notification />
           <LoginForm
             credentials={credentials}
             onSubmit={handleLogin}
