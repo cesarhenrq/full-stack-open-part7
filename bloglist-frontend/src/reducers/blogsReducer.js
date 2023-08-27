@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import blogService from '../services/blogs';
+
+import { setNotificationWithTimeout } from './notificationReducer';
+
+import { logout } from './userReducer';
 
 const initialState = [];
 
@@ -35,35 +40,69 @@ export const { setBlogs, addBlog, like, remove } = blogSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
-    const blogs = await blogService.getAll();
-    dispatch(setBlogs(blogs));
+    try {
+      const blogs = await blogService.getAll();
+      dispatch(setBlogs(blogs));
+    } catch (error) {
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+    }
   };
 };
 
-export const createBlog = (blog, token) => {
+export const createBlog = (blog, token, user) => {
   return async (dispatch) => {
-    const newBlog = await blogService.create(blog, token);
-    dispatch(addBlog(newBlog));
+    try {
+      const newBlog = await blogService.create(blog, token);
+      const blogToDisplay = { ...newBlog, user };
+
+      dispatch(addBlog(blogToDisplay));
+      dispatch(
+        setNotificationWithTimeout(`a new blog ${newBlog.title} added`, 5),
+      );
+    } catch (error) {
+      if (error.response.status === 401) {
+        dispatch(logout());
+      }
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+    }
   };
 };
 
 export const likeBlog = (blog, token) => {
   return async (dispatch) => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    };
+    try {
+      const updatedBlog = {
+        ...blog,
+        likes: blog.likes + 1,
+      };
 
-    const likedBlog = await blogService.update(updatedBlog, token);
+      const likedBlog = await blogService.update(updatedBlog, token);
 
-    dispatch(like({ likedBlog }));
+      dispatch(like({ likedBlog }));
+    } catch (error) {
+      if (error.response.status === 401) {
+        dispatch(logout());
+      } else if (error.response.status === 404) {
+        dispatch(like({ likedBlog: blog }));
+      }
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+    }
   };
 };
 
 export const removeBlog = (blog, token) => {
   return async (dispatch) => {
-    await blogService.remove(blog, token);
-    dispatch(remove({ deletedBlog: blog }));
+    try {
+      await blogService.remove(blog, token);
+      dispatch(remove({ deletedBlog: blog }));
+    } catch (error) {
+      if (error.response.status === 401) {
+        dispatch(logout());
+      } else if (error.response.status === 404) {
+        dispatch(remove({ deletedBlog: blog }));
+      }
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+    }
   };
 };
 

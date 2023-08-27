@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setNotificationWithTimeout } from './reducers/notificationReducer';
 import {
   initializeBlogs,
   createBlog,
@@ -10,6 +9,7 @@ import {
   setBlogs,
   removeBlog,
 } from './reducers/blogsReducer';
+import { login, logout, initializeUser } from './reducers/userReducer';
 
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -18,8 +18,6 @@ import LogoutButton from './components/LogoutButton';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-
-import authService from './services/auth';
 
 import getToken from './utils/getToken';
 
@@ -37,26 +35,19 @@ const App = () => {
     password: '',
   });
 
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.user);
 
   const blogFormRef = useRef(null);
 
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
-    try {
-      const user = await authService.authenticate(credentials);
-
-      setUser(user);
-      setCredentials({ username: '', password: '' });
-      window.localStorage.setItem('user', JSON.stringify(user));
-    } catch (error) {
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
-    }
+    dispatch(login(credentials));
+    setCredentials({ username: '', password: '' });
   };
 
   const handleLogout = () => {
-    setUser(null);
-    window.localStorage.removeItem('user');
+    dispatch(logout());
+    dispatch(setBlogs([]));
   };
 
   const handleCredentialsChange = (event) => {
@@ -66,68 +57,27 @@ const App = () => {
 
   const handleBlogPost = async (blog) => {
     const token = getToken();
-    try {
-      blogFormRef.current.toggleVisibility();
-      dispatch(createBlog(blog, token));
-
-      dispatch(
-        setNotificationWithTimeout(
-          `A new blog ${blog.title} by ${blog.author} added`,
-          5,
-        ),
-      );
-    } catch (error) {
-      if (error.response.status === 401) {
-        handleLogout();
-      }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
-    }
+    blogFormRef.current.toggleVisibility();
+    dispatch(createBlog(blog, token, user));
   };
 
   const handleBlogLike = async (blog) => {
     const token = getToken();
-    try {
-      dispatch(likeBlog(blog, token));
-    } catch (error) {
-      if (error.response.status === 401) {
-        handleLogout();
-      } else if (error.response.status === 404) {
-        dispatch(setBlogs(blogs.filter((b) => b.id !== blog.id)));
-      }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
-    }
+    dispatch(likeBlog(blog, token));
   };
 
   const handleBlogDelete = async (blog) => {
     const token = getToken();
-    try {
-      dispatch(removeBlog(blog, token));
-    } catch (error) {
-      if (error.response.status === 401) {
-        handleLogout();
-      } else if (error.response.status === 404) {
-        dispatch(setBlogs(blogs.filter((b) => b.id !== blog.id)));
-      }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
-    }
+    dispatch(removeBlog(blog, token));
   };
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        dispatch(initializeBlogs());
-      } catch (error) {
-        dispatch(setNotificationWithTimeout(error.response.data.error, 5));
-      }
-    };
-
-    user && fetchBlogs();
+    user && dispatch(initializeBlogs());
   }, [user, dispatch]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('user');
-    loggedUserJSON && setUser(JSON.parse(loggedUserJSON));
-  }, []);
+    dispatch(initializeUser());
+  }, [dispatch]);
 
   return (
     <div>
