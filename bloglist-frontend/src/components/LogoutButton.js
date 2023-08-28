@@ -1,12 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const LogoutButton = ({ onClick }) => {
-  return <button onClick={onClick}>Logout</button>;
-};
+import { useDispatch } from 'react-redux';
 
-LogoutButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+import { logout } from '../reducers/userReducer';
+import { setBlogs } from '../reducers/blogsReducer';
+
+const LogoutButton = () => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(setBlogs([]));
+  };
+
+  return <button onClick={handleLogout}>Logout</button>;
 };
 
 export default LogoutButton;

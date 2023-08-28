@@ -1,12 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
-const UserInfo = ({ user }) => {
+const UserInfo = () => {
+  const user = useSelector((state) => state.user);
+
   return <div>{user.name} logged in</div>;
-};
-
-UserInfo.propTypes = {
-  user: PropTypes.object.isRequired,
 };
 
 export default UserInfo;
