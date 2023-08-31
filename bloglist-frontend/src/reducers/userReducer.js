@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import authService from '../services/auth';
+import { authService } from '../services';
 
 import { setNotificationWithTimeout } from './notificationReducer';
 

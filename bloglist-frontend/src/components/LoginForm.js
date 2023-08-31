@@ -1,12 +1,20 @@
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
-import useField from '../hooks/useField';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { useNavigate } from 'react-router-dom';
+
+import { useField } from '../hooks';
 
 import { login } from '../reducers/userReducer';
 
 const LoginForm = () => {
   const [username, resetUsername] = useField('text');
   const [password, resetPassword] = useField('password');
+
+  const user = useSelector((state) => state.user);
+
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -22,9 +30,19 @@ const LoginForm = () => {
       username: username.value,
       password: password.value,
     };
+
     dispatch(login(credentials));
+
     reset();
   };
+
+  useEffect(() => {
+    user && navigate('/');
+  }, [user, navigate]);
+
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="login-form-container">

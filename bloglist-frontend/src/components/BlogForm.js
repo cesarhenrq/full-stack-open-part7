@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import useField from '../hooks/useField';
+import { useField } from '../hooks';
 
 import { createBlog } from '../reducers/blogsReducer';
 
-import getToken from '../utils/getToken';
+import getToken from '../utils/helpers/getToken';
 
 const BlogForm = ({ blogFormRef }) => {
   const [title, resetTitle] = useField('text');

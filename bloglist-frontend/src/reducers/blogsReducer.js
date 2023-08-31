@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import blogService from '../services/blogs';
+import { blogService } from '../services';
 
 import { setNotificationWithTimeout } from './notificationReducer';
 
@@ -41,8 +41,14 @@ export const { setBlogs, addBlog, like, remove } = blogSlice.actions;
 export const initializeBlogs = () => {
   return async (dispatch) => {
     try {
-      const blogs = await blogService.getAll();
-      dispatch(setBlogs(blogs));
+      const user = window.localStorage.getItem('user');
+
+      if (user) {
+        const blogs = await blogService.getAll();
+        dispatch(setBlogs(blogs));
+      }
+
+      return;
     } catch (error) {
       dispatch(setNotificationWithTimeout(error.response.data.error, 5));
     }

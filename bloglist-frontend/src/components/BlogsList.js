@@ -1,16 +1,10 @@
-import Blog from './Blog';
-
-import { useEffect } from 'react';
+import { Blog } from './';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  initializeBlogs,
-  likeBlog,
-  removeBlog,
-} from '../reducers/blogsReducer';
+import { likeBlog, removeBlog } from '../reducers/blogsReducer';
 
-import getToken from '../utils/getToken';
+import { getToken } from '../utils/helpers/';
 
 const BlogsList = () => {
   const blogs = useSelector((state) => {
@@ -18,8 +12,6 @@ const BlogsList = () => {
 
     return sortedBlogs;
   });
-
-  const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -33,13 +25,8 @@ const BlogsList = () => {
     dispatch(removeBlog(blog, token));
   };
 
-  useEffect(() => {
-    user && dispatch(initializeBlogs());
-  }, [user, dispatch]);
-
   return (
     <div>
-      <h2>blogs</h2>
       {blogs.map((blog) => (
         <Blog
           key={blog.id}
