@@ -9,6 +9,7 @@ import LogoutButton from './LogoutButton';
 import Users from './Users';
 import BaseLayout from './BaseLayout';
 import Home from './Home';
+import User from './User';
 
 export {
   Blog,
@@ -22,4 +23,5 @@ export {
   Users,
   BaseLayout,
   Home,
+  User,
 };

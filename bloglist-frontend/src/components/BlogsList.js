@@ -2,6 +2,10 @@ import { Blog } from './';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { useInitializeData } from '../hooks';
+
+import { initializeBlogs } from '../reducers/blogsReducer';
+
 import { likeBlog, removeBlog } from '../reducers/blogsReducer';
 
 import { getToken } from '../utils/helpers/';
@@ -24,6 +28,8 @@ const BlogsList = () => {
     const token = getToken();
     dispatch(removeBlog(blog, token));
   };
+
+  useInitializeData(initializeBlogs);
 
   return (
     <div>

@@ -15,6 +15,7 @@ const Home = () => {
     return <Navigate to="/login" />;
   }
 
+
   return (
     <div>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>

@@ -2,9 +2,17 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+
+import { useInitializeData } from '../hooks';
+
+import { initializeUsers } from '../reducers/usersReducer';
+
 const Users = () => {
   const users = useSelector((state) => state.users);
   const user = useSelector((state) => state.user);
+
+  useInitializeData(initializeUsers);
 
   if (!user) {
     return null;
@@ -23,7 +31,9 @@ const Users = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}

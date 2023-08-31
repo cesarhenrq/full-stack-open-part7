@@ -1,17 +1,20 @@
 import { Routes, Route } from 'react-router-dom';
 
-import { initializeUser } from './reducers/userReducer';
-import { initializeUsers } from './reducers/usersReducer';
-import { initializeBlogs } from './reducers/blogsReducer';
-
 import { useInitializeData } from './hooks';
 
-import { LoginForm, BaseLayout, Notification, Users, Home } from './components';
+import { initializeUser } from './reducers/userReducer';
+
+import {
+  LoginForm,
+  BaseLayout,
+  Notification,
+  Users,
+  Home,
+  User,
+} from './components';
 
 const App = () => {
   useInitializeData(initializeUser);
-  useInitializeData(initializeUsers);
-  useInitializeData(initializeBlogs);
 
   return (
     <div>
@@ -21,6 +24,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User />} />
       </Routes>
     </div>
   );
