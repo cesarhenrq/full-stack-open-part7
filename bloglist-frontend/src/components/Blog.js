@@ -1,30 +1,47 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 
-const Blog = ({ blog, onLike, onDelete }) => {
-  const [visible, setVisible] = useState(false);
+import { useMatch, useNavigate } from 'react-router-dom';
 
-  const handleVisibility = () => {
-    setVisible(!visible);
-  };
+import { likeBlog, removeBlog } from '../reducers/blogsReducer';
 
-  const buttonLabel = visible ? 'hide' : 'view';
+import { getToken } from '../utils/helpers/';
 
-  const blogInfoVisibility = { display: visible ? '' : 'none' };
+const Blog = () => {
+  const match = useMatch('/blogs/:id');
+
+  const blog = useSelector((state) => {
+    const blog = match
+      ? state.blogs.find((blog) => blog.id === match.params.id)
+      : null;
+
+    return blog;
+  });
+
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const handleBlogLike = () => {
-    onLike({
-      ...blog,
-      user: blog.user.id,
-      _id: blog.id,
-    });
+    const token = getToken();
+    dispatch(
+      likeBlog(
+        {
+          ...blog,
+          user: blog.user.id,
+          _id: blog.id,
+        },
+        token,
+      ),
+    );
   };
 
   const handleBlogDelete = () => {
     const shouldDelete = window.confirm(
       `Remove blog ${blog.title} by ${blog.author}?`,
     );
-    shouldDelete && onDelete(blog);
+    const token = getToken();
+    shouldDelete && dispatch(removeBlog(blog, token));
+    navigate('/');
   };
 
   const isBlogCreatedByLoggedInUser = () => {
@@ -34,28 +51,27 @@ const Blog = ({ blog, onLike, onDelete }) => {
     return blog.user.username === loggedInUsername;
   };
 
+  if (!blog) {
+    return null;
+  }
+
   return (
     <div className="blog-post">
-      {blog.title} {blog.author}{' '}
-      <button onClick={handleVisibility}>{buttonLabel}</button>
-      <div style={blogInfoVisibility} className="blog-post-info">
-        <div>{blog.url}</div>
+      <h2>
+        {blog.title} {blog.author}
+      </h2>
+      <div className="blog-post-info">
+        <a href={blog.url}>{blog.url}</a>
         <div>
           likes {blog.likes} <button onClick={handleBlogLike}>like</button>
         </div>
-        <div>{blog.user.name}</div>
+        <div>added by {blog.user.name}</div>
         {isBlogCreatedByLoggedInUser() && (
           <button onClick={handleBlogDelete}>remove</button>
         )}
       </div>
     </div>
   );
-};
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  onLike: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default Blog;

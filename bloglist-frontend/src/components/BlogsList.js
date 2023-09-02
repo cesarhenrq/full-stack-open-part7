@@ -1,14 +1,10 @@
-import { Blog } from './';
+import { useSelector } from 'react-redux';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { useInitializeData } from '../hooks';
 
 import { initializeBlogs } from '../reducers/blogsReducer';
-
-import { likeBlog, removeBlog } from '../reducers/blogsReducer';
-
-import { getToken } from '../utils/helpers/';
 
 const BlogsList = () => {
   const blogs = useSelector((state) => {
@@ -17,29 +13,25 @@ const BlogsList = () => {
     return sortedBlogs;
   });
 
-  const dispatch = useDispatch();
-
-  const handleBlogLike = async (blog) => {
-    const token = getToken();
-    dispatch(likeBlog(blog, token));
-  };
-
-  const handleBlogDelete = async (blog) => {
-    const token = getToken();
-    dispatch(removeBlog(blog, token));
-  };
-
   useInitializeData(initializeBlogs);
+
+  const linkStyle = {
+    border: '1px solid black',
+    display: 'block',
+    padding: '10px',
+  };
 
   return (
     <div>
       {blogs.map((blog) => (
-        <Blog
+        <Link
+          style={linkStyle}
           key={blog.id}
-          blog={blog}
-          onLike={handleBlogLike}
-          onDelete={handleBlogDelete}
-        />
+          to={`/blogs/${blog.id}`}
+          className="blog-link"
+        >
+          {blog.title} {blog.author}
+        </Link>
       ))}
     </div>
   );
