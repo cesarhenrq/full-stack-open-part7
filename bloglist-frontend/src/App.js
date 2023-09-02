@@ -6,7 +6,7 @@ import { initializeUser } from './reducers/userReducer';
 
 import {
   LoginForm,
-  BaseLayout,
+  Menu,
   Notification,
   Users,
   Home,
@@ -20,7 +20,7 @@ const App = () => {
   return (
     <div>
       <Notification />
-      <BaseLayout />
+      <Menu />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />

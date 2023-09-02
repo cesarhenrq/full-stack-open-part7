@@ -7,7 +7,7 @@ import Notification from './Notification';
 import UserInfo from './UserInfo';
 import LogoutButton from './LogoutButton';
 import Users from './Users';
-import BaseLayout from './BaseLayout';
+import Menu from './Menu';
 import Home from './Home';
 import User from './User';
 
@@ -21,7 +21,7 @@ export {
   UserInfo,
   LogoutButton,
   Users,
-  BaseLayout,
+  Menu,
   Home,
   User,
 };
