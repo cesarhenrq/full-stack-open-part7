@@ -10,6 +10,7 @@ import Users from './Users';
 import Menu from './Menu';
 import Home from './Home';
 import User from './User';
+import Comments from './Comments';
 
 export {
   Blog,
@@ -24,4 +25,5 @@ export {
   Menu,
   Home,
   User,
+  Comments,
 };

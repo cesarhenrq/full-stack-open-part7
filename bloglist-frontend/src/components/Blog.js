@@ -2,6 +2,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { useMatch, useNavigate } from 'react-router-dom';
 
+import { Comments } from './';
+
 import { likeBlog, removeBlog } from '../reducers/blogsReducer';
 
 import { getToken } from '../utils/helpers/';
@@ -70,6 +72,7 @@ const Blog = () => {
           <button onClick={handleBlogDelete}>remove</button>
         )}
       </div>
+      <Comments comments={blog.comments} />
     </div>
   );
 };
