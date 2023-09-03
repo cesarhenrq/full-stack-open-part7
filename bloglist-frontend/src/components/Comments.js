@@ -1,14 +1,17 @@
 import propTypes from 'prop-types';
 
-const Comments = ({ comments }) => {
-  const hasComments = comments.length > 0;
+import { CommentForm } from './';
+
+const Comments = ({ blog }) => {
+  const hasComments = blog.comments.length > 0;
 
   return (
     <div>
       <h3>Comments</h3>
+      <CommentForm blog={blog} />
       {hasComments ? (
         <ul>
-          {comments.map((comment) => (
+          {blog.comments.map((comment) => (
             <li key={`${comment}-${Date.now}`}>{comment}</li>
           ))}
         </ul>
@@ -20,7 +23,7 @@ const Comments = ({ comments }) => {
 };
 
 Comments.propTypes = {
-  comments: propTypes.array.isRequired,
+  blog: propTypes.object.isRequired,
 };
 
 export default Comments;

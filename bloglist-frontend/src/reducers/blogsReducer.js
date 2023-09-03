@@ -33,10 +33,18 @@ const blogSlice = createSlice({
 
       return state.filter((blog) => blog.id !== deletedBlog.id);
     },
+
+    update(state, action) {
+      const { updatedBlog } = action.payload;
+
+      return state.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog,
+      );
+    },
   },
 });
 
-export const { setBlogs, addBlog, like, remove } = blogSlice.actions;
+export const { setBlogs, addBlog, like, remove, update } = blogSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
@@ -101,6 +109,23 @@ export const removeBlog = (blog, token) => {
     try {
       await blogService.remove(blog, token);
       dispatch(remove({ deletedBlog: blog }));
+    } catch (error) {
+      if (error.response.status === 401) {
+        dispatch(logout());
+      } else if (error.response.status === 404) {
+        dispatch(remove({ deletedBlog: blog }));
+      }
+      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+    }
+  };
+};
+
+export const addComment = (blog, comment, token) => {
+  return async (dispatch) => {
+    try {
+      const updatedBlog = await blogService.addComment(blog, comment, token);
+
+      dispatch(update({ updatedBlog }));
     } catch (error) {
       if (error.response.status === 401) {
         dispatch(logout());

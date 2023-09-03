@@ -11,6 +11,7 @@ import Menu from './Menu';
 import Home from './Home';
 import User from './User';
 import Comments from './Comments';
+import CommentForm from './CommentForm';
 
 export {
   Blog,
@@ -26,4 +27,5 @@ export {
   Home,
   User,
   Comments,
+  CommentForm,
 };

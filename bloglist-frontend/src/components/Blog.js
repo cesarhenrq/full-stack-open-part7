@@ -72,7 +72,7 @@ const Blog = () => {
           <button onClick={handleBlogDelete}>remove</button>
         )}
       </div>
-      <Comments comments={blog.comments} />
+      <Comments blog={blog} />
     </div>
   );
 };
