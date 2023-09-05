@@ -23,9 +23,26 @@ export const login = (user) => {
       const { username, name } = loggedInUser;
 
       dispatch(setUser({ username, name }));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: `${name} welcome back!`,
+            type: 'success',
+          },
+          5,
+        ),
+      );
       window.localStorage.setItem('user', JSON.stringify(loggedInUser));
     } catch (error) {
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: error.response.data.error,
+            type: 'error',
+          },
+          5,
+        ),
+      );
     }
   };
 };

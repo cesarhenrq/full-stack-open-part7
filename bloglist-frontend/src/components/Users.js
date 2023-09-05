@@ -8,6 +8,8 @@ import { useInitializeData } from '../hooks';
 
 import { initializeUsers } from '../reducers/usersReducer';
 
+import { UsersContainer } from './Users.styles';
+
 const Users = () => {
   const users = useSelector((state) => state.users);
   const user = useSelector((state) => state.user);
@@ -19,7 +21,7 @@ const Users = () => {
   }
 
   return (
-    <div>
+    <UsersContainer>
       <h2>Users</h2>
       <table>
         <thead>
@@ -39,7 +41,7 @@ const Users = () => {
           ))}
         </tbody>
       </table>
-    </div>
+    </UsersContainer>
   );
 };
 

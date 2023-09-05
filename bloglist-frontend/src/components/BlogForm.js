@@ -8,6 +8,8 @@ import { createBlog } from '../reducers/blogsReducer';
 
 import getToken from '../utils/helpers/getToken';
 
+import { BlogFormContainer } from './BlogForm.styles';
+
 const BlogForm = ({ blogFormRef }) => {
   const [title, resetTitle] = useField('text');
   const [author, resetAuthor] = useField('text');
@@ -40,26 +42,26 @@ const BlogForm = ({ blogFormRef }) => {
   };
 
   return (
-    <div className="blog-form-container">
+    <BlogFormContainer>
       <h2>Create new</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          Title:
+        <div className="form-group">
+          <label htmlFor="title">Title</label>
           <input name="title" id="title" {...title} />
         </div>
-        <div>
-          author:
+        <div className="form-group">
+          <label htmlFor="author">Author</label>
           <input name="author" id="author" {...author} />
         </div>
-        <div>
-          url:
+        <div className="form-group">
+          <label htmlFor="url">Url</label>
           <input name="url" id="url" {...url} />
         </div>
         <button type="submit" id="create-blog-button">
           create
         </button>
       </form>
-    </div>
+    </BlogFormContainer>
   );
 };
 

@@ -8,6 +8,8 @@ import { likeBlog, removeBlog } from '../reducers/blogsReducer';
 
 import { getToken } from '../utils/helpers/';
 
+import { BlogContainer } from './Blog.styles';
+
 const Blog = () => {
   const match = useMatch('/blogs/:id');
 
@@ -58,22 +60,27 @@ const Blog = () => {
   }
 
   return (
-    <div className="blog-post">
+    <BlogContainer>
       <h2>
         {blog.title} {blog.author}
       </h2>
       <div className="blog-post-info">
         <a href={blog.url}>{blog.url}</a>
         <div>
-          likes {blog.likes} <button onClick={handleBlogLike}>like</button>
+          likes {blog.likes}{' '}
+          <button onClick={handleBlogLike} className="like-button">
+            like
+          </button>
         </div>
         <div>added by {blog.user.name}</div>
         {isBlogCreatedByLoggedInUser() && (
-          <button onClick={handleBlogDelete}>remove</button>
+          <button onClick={handleBlogDelete} className="remove-button">
+            remove
+          </button>
         )}
       </div>
       <Comments blog={blog} />
-    </div>
+    </BlogContainer>
   );
 };
 

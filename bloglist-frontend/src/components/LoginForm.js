@@ -8,6 +8,8 @@ import { useField } from '../hooks';
 
 import { login } from '../reducers/userReducer';
 
+import { LoginFormContainer } from './LoginForm.styles';
+
 const LoginForm = () => {
   const [username, resetUsername] = useField('text');
   const [password, resetPassword] = useField('password');
@@ -45,22 +47,22 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="login-form-container">
+    <LoginFormContainer>
       <h2>Login to application</h2>
       <form onSubmit={handleLogin} className="login-form">
-        <div>
-          username
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
           <input name="username" id="username" {...username} />
         </div>
-        <div>
-          password
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
           <input name="password" id="password" {...password} />
         </div>
         <button type="submit" id="login-button">
-          login
+          Login
         </button>
       </form>
-    </div>
+    </LoginFormContainer>
   );
 };
 

@@ -8,6 +8,8 @@ import { addComment } from '../reducers/blogsReducer';
 
 import { getToken } from '../utils/helpers';
 
+import { CommentFormContainer } from './CommentForm.styles';
+
 const CommentForm = ({ blog }) => {
   const [comment, resetComment] = useField('text');
 
@@ -25,12 +27,12 @@ const CommentForm = ({ blog }) => {
   };
 
   return (
-    <div>
+    <CommentFormContainer>
       <form onSubmit={handleSubmit}>
         <input {...comment} />
         <button type="submit">add comment</button>
       </form>
-    </div>
+    </CommentFormContainer>
   );
 };
 

@@ -24,7 +24,15 @@ export const initializeUsers = () => async (dispatch) => {
 
     dispatch(setUsers(users));
   } catch (error) {
-    dispatch(setNotificationWithTimeout(error.response.data.error, 'error', 5));
+    dispatch(
+      setNotificationWithTimeout(
+        {
+          message: error.response.data.error,
+          type: 'error',
+        },
+        5,
+      ),
+    );
   }
 };
 

@@ -71,13 +71,27 @@ export const createBlog = (blog, token, user) => {
 
       dispatch(addBlog(blogToDisplay));
       dispatch(
-        setNotificationWithTimeout(`a new blog ${newBlog.title} added`, 5),
+        setNotificationWithTimeout(
+          {
+            message: `a new blog ${blogToDisplay.title} by ${blogToDisplay.author} added`,
+            type: 'success',
+          },
+          5,
+        ),
       );
     } catch (error) {
       if (error.response.status === 401) {
         dispatch(logout());
       }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: error.response.data.error,
+            type: 'error',
+          },
+          5,
+        ),
+      );
     }
   };
 };
@@ -99,7 +113,15 @@ export const likeBlog = (blog, token) => {
       } else if (error.response.status === 404) {
         dispatch(like({ likedBlog: blog }));
       }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: error.response.data.error,
+            type: 'error',
+          },
+          5,
+        ),
+      );
     }
   };
 };
@@ -115,7 +137,15 @@ export const removeBlog = (blog, token) => {
       } else if (error.response.status === 404) {
         dispatch(remove({ deletedBlog: blog }));
       }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: error.response.data.error,
+            type: 'error',
+          },
+          5,
+        ),
+      );
     }
   };
 };
@@ -132,7 +162,15 @@ export const addComment = (blog, comment, token) => {
       } else if (error.response.status === 404) {
         dispatch(remove({ deletedBlog: blog }));
       }
-      dispatch(setNotificationWithTimeout(error.response.data.error, 5));
+      dispatch(
+        setNotificationWithTimeout(
+          {
+            message: error.response.data.error,
+            type: 'error',
+          },
+          5,
+        ),
+      );
     }
   };
 };
